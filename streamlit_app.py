@@ -39,15 +39,16 @@ st.markdown(
 )
 
 # --- PAGE CONTENT ---
-st.markdown('<div class="title-beige">Welcome to the Study!</div>', unsafe_allow_html=True)
+st.markdown('<div class="title-beige">Welcome to the Heat Stress Research Study!</div>', unsafe_allow_html=True)
 
 st.markdown('<div class="subheader">Fitbit Authorization Page</div>', unsafe_allow_html=True)
 
 st.markdown(
     """
     <div class="normal-text">
-        This secure page allows you to connect your Fitbit account using OAuth2 with PKCE.
-        Once authenticated, the app will fetch your profile and provide access tokens for testing.
+        You’ll use this page to securely connect your Fitbit account.
+        After you log in and approve the connection, the app will automatically access the Fitbit data needed for the study. 
+        Your information is handled safely and used only for research purposes.
     </div>
     """,
     unsafe_allow_html=True
