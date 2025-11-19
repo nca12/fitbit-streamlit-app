@@ -41,7 +41,7 @@ st.markdown(
 # --- PAGE CONTENT ---
 st.markdown(
     "<h1 style='text-align: center; color: #E8D7B9; font-size: 64px; margin-bottom: 10px;'>"
-    "Welcome to the Blank Blank Research Study!"
+    "Welcome to the Heat Stress Research Study!"
     "</h1>",
     unsafe_allow_html=True
 )
