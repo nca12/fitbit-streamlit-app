@@ -5,6 +5,28 @@ import hashlib
 import base64 
 import urllib.parse 
  
+# =========================================
+#                 PAGE CONFIG
+# =========================================
+st.set_page_config(
+    page_title="Fitbit Authorization Page",
+    page_icon="💙",
+    layout="centered",
+)
+
+# =========================================
+#                 HEADER UI
+# =========================================
+st.title("Fitbit Authorization Page for Heat Stress Research Study")
+st.markdown(
+    """
+    Welcome!  
+    This secure page allows you to connect your Fitbit account using OAuth2 with PKCE.  
+    Once authenticated, the app will fetch your profile and provide access tokens for testing.
+    """
+)
+
+
 # ============================================================ 
 #                REQUIRED CONFIGURATION 
 # ============================================================ 
@@ -122,3 +144,4 @@ if profile_res.status_code == 200:
 else: 
     st.error("Failed to fetch profile:") 
     st.write(profile_res.text)
+
