@@ -5,25 +5,71 @@ import hashlib
 import base64 
 import urllib.parse 
  
-# =========================================
-#                 PAGE CONFIG
-# =========================================
-st.set_page_config(
-    page_title="Fitbit Authorization Page",
-    page_icon="💙",
-    layout="centered",
-)
+import streamlit as st
 
-# =========================================
-#                 HEADER UI
-# =========================================
-st.title("Fitbit Authorization Page")
-st.subheader("Welcome to the Study!")
+# ---- PAGE TITLE / HEADER STYLING ----
 st.markdown(
     """
-    This secure page allows you to connect your Fitbit account using OAuth2 with PKCE.  
-    Once authenticated, the app will fetch your profile and provide access tokens for testing.
+    <style>
+    .center-text {
+        text-align: center;
+    }
+    .title-orange {
+        text-align: center;
+        color: #CC5500; /* Burnt orange */
+        font-size: 48px;
+        font-weight: 700;
+        padding-top: 20px;
+    }
+    .subheader {
+        text-align: center;
+        font-size: 32px;
+        font-weight: 600;
+        margin-top: -10px;
+    }
+    .body-text {
+        text-align: center;
+        font-size: 20px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+        padding: 10px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# ---- ORANGE TITLE ----
+st.markdown(
+    "<div class='title-orange'>Welcome to the Study!</div>",
+    unsafe_allow_html=True
+)
+
+# ---- SUBHEADER ----
+st.markdown(
+    "<div class='subheader'>Fitbit Authorization Page</div>",
+    unsafe_allow_html=True
+)
+
+# ---- BODY DESCRIPTION ----
+st.markdown(
     """
+    <p class='body-text'>
+        This secure page allows you to connect your Fitbit account using OAuth2 with PKCE.
+        Once authenticated, the app will fetch your profile and provide access tokens for testing.
+    </p>
+    """,
+    unsafe_allow_html=True
+)
+
+# ---- CONNECT YOUR FITBIT ACCOUNT TITLE ----
+st.markdown(
+    """
+    <h2 class='center-text'>To get started, connect your Fitbit account below.</h2>
+    """,
+    unsafe_allow_html=True
 )
 
 
