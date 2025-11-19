@@ -190,13 +190,16 @@ st.session_state["fitbit_access_token"] = tokens["access_token"]
 st.session_state["fitbit_refresh_token"] = tokens["refresh_token"]
 st.session_state["fitbit_user_id"] = tokens["user_id"]
 
-# Friendly confirmation only (no raw data shown)
+# Friendly success message
 st.success("You're all set! Your Fitbit account is now connected.")
-st.markdown(
-    "You can close this page now. "
-    "Thank you for completing the Fitbit connection step."
-)
 
+st.markdown(
+    """
+    ### You can close this page now.
+    Thank you for completing the Fitbit connection step.
+    """,
+    unsafe_allow_html=True
+)
 # ============================================================
 #   (Optional) STEP 3 — Example API Call (HIDDEN FROM USERS)
 # ============================================================
