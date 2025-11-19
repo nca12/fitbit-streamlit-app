@@ -18,10 +18,9 @@ st.set_page_config(
 #                 HEADER UI
 # =========================================
 st.title("Fitbit Authorization Page")
-st.subheader("Welcome to the Heat Stress Research Study")
+st.subheader("Welcome to the Study!")
 st.markdown(
     """
-    Welcome!  
     This secure page allows you to connect your Fitbit account using OAuth2 with PKCE.  
     Once authenticated, the app will fetch your profile and provide access tokens for testing.
     """
