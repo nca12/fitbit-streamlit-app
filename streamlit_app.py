@@ -11,7 +11,12 @@ import urllib.parse
 CLIENT_ID = st.secrets["FITBIT_CLIENT_ID"]        # from .streamlit/secrets.toml 
 REDIRECT_URI = "https://fitbit-verification-page-hsr.streamlit.app"    
  
-SCOPES = "activity heartrate sleep profile nutrition respiratory_rate settings weight" 
+SCOPES = (
+    "activity heartrate location nutrition profile settings sleep social weight "
+    "respiratory_rate temperature oxygen_saturation cardio_fitness "
+    "electrocardiogram irregular_rhythm_notifications"
+)
+
  
  
 # ============================================================ 
