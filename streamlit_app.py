@@ -40,16 +40,9 @@ st.markdown(
 
 # --- PAGE CONTENT ---
 st.markdown(
-    """
-    <div style='text-align: center; margin-bottom: 0px;'>
-        <h1 style='color:#E6D8B5; margin-bottom: 10px;'>
-            Welcome to the Blank
-        </h1>
-        <h1 style='color:#E6D8B5; margin-top: -10px;'>
-            Blank Research Study!
-        </h1>
-    </div>
-    """,
+    "<h1 style='text-align: center; color: #E8D7B9; font-size: 64px; margin-bottom: 10px;'>"
+    "Welcome to the Blank Blank Research Study!"
+    "</h1>",
     unsafe_allow_html=True
 )
 
