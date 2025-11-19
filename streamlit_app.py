@@ -59,7 +59,7 @@ def generate_code_challenge(verifier: str):
 # ============================================================ 
 #                   STREAMLIT APP UI 
 # ============================================================ 
-st.title("Fitbit OAuth2 PKCE Login Demo") 
+#st.title("Fitbit OAuth2 PKCE Login Demo") 
  
 params = st.experimental_get_query_params() 
 auth_code = params.get("code", [None])[0] 
