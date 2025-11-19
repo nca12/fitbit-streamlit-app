@@ -191,7 +191,26 @@ st.session_state["fitbit_refresh_token"] = tokens["refresh_token"]
 st.session_state["fitbit_user_id"] = tokens["user_id"]
 
 # Friendly success message
-st.success("You're all set! Your Fitbit account is now connected.")
+st.markdown(
+    """
+    <div style="text-align: center;">
+        <div style="
+            background-color: #e8f8ee;
+            padding: 20px;
+            border-radius: 12px;
+            display: inline-block;
+            font-size: 22px;
+            color: #1b7a4e;
+            font-weight: 500;
+            margin-top: 20px;
+        ">
+            You're all set! Your Fitbit account is now connected.
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 
 st.markdown(
     """
