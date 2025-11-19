@@ -39,7 +39,20 @@ st.markdown(
 )
 
 # --- PAGE CONTENT ---
-st.markdown('<div class="title-beige">Welcome to the Blank Blank Research Study!</div>', unsafe_allow_html=True)
+st.markdown(
+    """
+    <div style='text-align: center; margin-bottom: 0px;'>
+        <h1 style='color:#E6D8B5; margin-bottom: 10px;'>
+            Welcome to the Blank
+        </h1>
+        <h1 style='color:#E6D8B5; margin-top: -10px;'>
+            Blank Research Study!
+        </h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 
 st.markdown('<div class="subheader">Fitbit Authorization Page</div>', unsafe_allow_html=True)
 
