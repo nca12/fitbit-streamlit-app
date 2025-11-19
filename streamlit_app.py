@@ -5,72 +5,55 @@ import hashlib
 import base64 
 import urllib.parse 
  
-import streamlit as st
 
-# ---- PAGE TITLE / HEADER STYLING ----
+# --- PAGE HEADER STYLING ---
 st.markdown(
     """
     <style>
-    .center-text {
-        text-align: center;
-    }
-    .title-orange {
-        text-align: center;
-        color: #CC5500; /* Burnt orange */
-        font-size: 48px;
-        font-weight: 700;
-        padding-top: 20px;
-    }
-    .subheader {
-        text-align: center;
-        font-size: 32px;
-        font-weight: 600;
-        margin-top: -10px;
-    }
-    .body-text {
-        text-align: center;
-        font-size: 20px;
-        max-width: 800px;
-        margin-left: auto;
-        margin-right: auto;
-        line-height: 1.6;
-        padding: 10px;
-    }
+        .center-text {
+            text-align: center;
+        }
+        .title-beige {
+            color: #e4d7b7; /* beige */
+            font-size: 60px;
+            font-weight: 800;
+            text-align: center;
+            padding-bottom: 10px;
+        }
+        .subheader {
+            text-align: center;
+            font-size: 34px;
+            font-weight: 600;
+            padding-bottom: 20px;
+        }
+        .normal-text {
+            text-align: center;
+            font-size: 22px;
+            line-height: 1.5;
+            max-width: 900px;
+            margin: auto;
+        }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# ---- ORANGE TITLE ----
-st.markdown(
-    "<div class='title-orange'>Welcome to the Study!</div>",
-    unsafe_allow_html=True
-)
+# --- PAGE CONTENT ---
+st.markdown('<div class="title-beige">Welcome to the Study!</div>', unsafe_allow_html=True)
 
-# ---- SUBHEADER ----
-st.markdown(
-    "<div class='subheader'>Fitbit Authorization Page</div>",
-    unsafe_allow_html=True
-)
+st.markdown('<div class="subheader">Fitbit Authorization Page</div>', unsafe_allow_html=True)
 
-# ---- BODY DESCRIPTION ----
 st.markdown(
     """
-    <p class='body-text'>
+    <div class="normal-text">
         This secure page allows you to connect your Fitbit account using OAuth2 with PKCE.
         Once authenticated, the app will fetch your profile and provide access tokens for testing.
-    </p>
+    </div>
     """,
     unsafe_allow_html=True
 )
 
-# ---- CONNECT YOUR FITBIT ACCOUNT TITLE ----
-st.markdown(
-    """
-    <h2 class='center-text'>To get started, connect your Fitbit account below.</h2>
-    """,
-    unsafe_allow_html=True
-)
+st.markdown('<div class="subheader" style="margin-top: 40px;">To get started, connect your Fitbit account below.</div>', unsafe_allow_html=True)
 
 
 # ============================================================ 
