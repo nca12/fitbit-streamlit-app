@@ -6,34 +6,34 @@ import base64
 import urllib.parse 
  
 
-# --- PAGE HEADER STYLING ---
 st.markdown(
     """
     <style>
-        .center-text {
-            text-align: center;
+        /* Reduce spacing between big title lines */
+        .title-line {
+            margin-bottom: -20px; /* pulls lines closer together */
+            margin-top: 10px;
         }
-        .title-beige {
-            color: #e4d7b7; /* beige */
-            font-size: 60px;
-            font-weight: 800;
+        .main-title {
+            font-size: 56px; 
+            font-weight: 700;
+            color: #E5D3B3; /* beige */
             text-align: center;
-            padding-bottom: 10px;
-        }
-        .subheader {
-            text-align: center;
-            font-size: 34px;
-            font-weight: 600;
-            padding-bottom: 20px;
-        }
-        .normal-text {
-            text-align: center;
-            font-size: 22px;
-            line-height: 1.5;
-            max-width: 900px;
-            margin: auto;
+            line-height: 1.1; /* tightens vertical space */
         }
     </style>
+    """,
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    """
+    <div class='main-title title-line'>
+        Welcome to the Blank
+    </div>
+    <div class='main-title'>
+        Blank Research Study!
+    </div>
     """,
     unsafe_allow_html=True
 )
