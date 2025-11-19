@@ -151,16 +151,14 @@ if not auth_code:
 #        STEP 2 — Exchange Authorization Code for Tokens
 # ============================================================
 
-st.markdown("### Authorization code received!")
-st.code(auth_code)
-
 # Prefer the verifier that came back in `state`.
 # (If for some reason it's missing, this falls back to session_state.)
 code_verifier = returned_state or st.session_state.get("code_verifier")
 
 if not code_verifier:
     st.error(
-        "Missing code verifier. Please go back to the start page and try connecting again."
+        "Something went wrong while verifying your connection. "
+        "Please go back to the start page and try connecting again."
     )
     st.stop()
 
@@ -179,25 +177,35 @@ response = requests.post(
 )
 
 if response.status_code != 200:
-    st.error("Token exchange failed:")
-    st.write(response.text)
+    st.error("We couldn't finish connecting to Fitbit.")
+    st.write("Please try again. If this keeps happening, contact the study team.")
+    # Optional: show raw error only if *you* are debugging
+    # st.write(response.text)
     st.stop()
 
 tokens = response.json()
 
+# Store tokens in session_state (not shown to user)
 st.session_state["fitbit_access_token"] = tokens["access_token"]
 st.session_state["fitbit_refresh_token"] = tokens["refresh_token"]
 st.session_state["fitbit_user_id"] = tokens["user_id"]
 
-st.success("Successfully authenticated with Fitbit!")
-st.json(tokens)
-
+# Friendly confirmation only (no raw data shown)
+st.success("You're all set! Your Fitbit account is now connected.")
+st.markdown(
+    "You can close this page now. "
+    "Thank you for completing the Fitbit connection step."
+)
 
 # ============================================================
-#                  STEP 3 — Example API Call
+#   (Optional) STEP 3 — Example API Call (HIDDEN FROM USERS)
 # ============================================================
+# If you ever want to debug or test the connection yourself,
+# you can temporarily uncomment the section below.
+
+"""
 st.markdown("---")
-st.markdown("## Example API Call: User Profile")
+st.markdown("## Example API Call: User Profile (debug only)")
 
 headers = {"Authorization": f"Bearer {st.session_state['fitbit_access_token']}"}
 
@@ -211,3 +219,4 @@ if profile_res.status_code == 200:
 else:
     st.error("Failed to fetch profile:")
     st.write(profile_res.text)
+"""
