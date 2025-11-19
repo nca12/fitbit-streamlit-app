@@ -195,10 +195,16 @@ st.success("You're all set! Your Fitbit account is now connected.")
 
 st.markdown(
     """
-    ### You can close this page now.
-    Thank you for completing the Fitbit connection step.
+    <div style="text-align: center; margin-top: 40px;">
+        <h2 style="font-weight: 700; font-size: 42px; margin-bottom: 10px;">
+            You can close this page now.
+        </h2>
+        <p style="font-size: 22px; color: #444;">
+            Thank you for completing the Fitbit connection step.
+        </p>
+    </div>
     """,
-    unsafe_allow_html=True,
+    unsafe_allow_html=True
 )
 
 
