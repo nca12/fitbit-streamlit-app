@@ -198,28 +198,28 @@ st.markdown(
     ### You can close this page now.
     Thank you for completing the Fitbit connection step.
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
+
+
 # ============================================================
-#   (Optional) STEP 3 — Example API Call (HIDDEN FROM USERS)
+#   (Optional) STEP 3 — Example API Call (DEBUG ONLY – COMMENTED)
 # ============================================================
 # If you ever want to debug or test the connection yourself,
 # you can temporarily uncomment the section below.
-
-"""
-st.markdown("---")
-st.markdown("## Example API Call: User Profile (debug only)")
-
-headers = {"Authorization": f"Bearer {st.session_state['fitbit_access_token']}"}
-
-profile_res = requests.get(
-    f"https://api.fitbit.com/1/user/{st.session_state['fitbit_user_id']}/profile.json",
-    headers=headers,
-)
-
-if profile_res.status_code == 200:
-    st.json(profile_res.json())
-else:
-    st.error("Failed to fetch profile:")
-    st.write(profile_res.text)
-"""
+#
+# st.markdown("---")
+# st.markdown("## Example API Call: User Profile (debug only)")
+#
+# headers = {"Authorization": f"Bearer {st.session_state['fitbit_access_token']}"}
+#
+# profile_res = requests.get(
+#     f"https://api.fitbit.com/1/user/{st.session_state['fitbit_user_id']}/profile.json",
+#     headers=headers,
+# )
+#
+# if profile_res.status_code == 200:
+#     st.json(profile_res.json())
+# else:
+#     st.error("Failed to fetch profile:")
+#     st.write(profile_res.text)
