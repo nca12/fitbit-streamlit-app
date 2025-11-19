@@ -39,7 +39,7 @@ st.markdown(
 )
 
 # --- PAGE CONTENT ---
-st.markdown('<div class="title-beige">Welcome to the Heat Stress Research Study!</div>', unsafe_allow_html=True)
+st.markdown('<div class="title-beige">Welcome to the Blank Blank Research Study!</div>', unsafe_allow_html=True)
 
 st.markdown('<div class="subheader">Fitbit Authorization Page</div>', unsafe_allow_html=True)
 
