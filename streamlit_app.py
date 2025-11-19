@@ -115,9 +115,29 @@ if not auth_code:
         "code_challenge_method=S256" 
     ) 
  
-    st.markdown("### Connect Your Fitbit Account") 
-    st.markdown(f"[Click here to authorize Fitbit]({auth_url})", unsafe_allow_html=True) 
-    st.stop() 
+
+    st.markdown(
+    f"""
+    <div style="text-align: center; margin-top: 25px;">
+        <a href="{auth_url}" 
+           style="
+                background-color: #4CAF50;
+                color: white;
+                padding: 15px 30px;
+                border-radius: 10px;
+                font-size: 24px;
+                font-weight: bold;
+                text-decoration: none;
+                display: inline-block;
+           ">
+           Connect with Fitbit
+        </a>
+    </div>
+    """,
+    unsafe_allow_html=True
+    )
+    st.stop()
+
  
  
 # ============================================================ 
