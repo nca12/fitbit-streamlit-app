@@ -17,7 +17,8 @@ st.set_page_config(
 # =========================================
 #                 HEADER UI
 # =========================================
-st.title("Fitbit Authorization Page for Heat Stress Research Study")
+st.title("Fitbit Authorization Page")
+st.subheader("Welcome to the Heat Stress Research Study")
 st.markdown(
     """
     Welcome!  
