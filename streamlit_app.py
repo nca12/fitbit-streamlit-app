@@ -9,7 +9,7 @@ import urllib.parse
 #                REQUIRED CONFIGURATION 
 # ============================================================ 
 CLIENT_ID = st.secrets["FITBIT_CLIENT_ID"]        # from .streamlit/secrets.toml 
-REDIRECT_URI = "https://YOUR-APP-NAME.streamlit.app"   # we'll update this after deployment 
+REDIRECT_URI = "https://fitbit-verification-page-hsr.streamlit.app"    
  
 SCOPES = "activity heartrate sleep profile nutrition respiratory_rate settings weight" 
  
