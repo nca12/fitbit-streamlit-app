@@ -3,8 +3,9 @@ import requests
 import os 
 import hashlib 
 import base64 
-import urllib.parse 
- 
+import urllib.parse
+import boto3  # NEW
+
 
 # --- PAGE HEADER STYLING ---
 st.markdown(
@@ -46,7 +47,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
 st.markdown('<div class="subheader">Fitbit Authorization Page</div>', unsafe_allow_html=True)
 
 st.markdown(
@@ -75,6 +75,33 @@ SCOPES = (
     "electrocardiogram irregular_rhythm_notifications"
 )
 
+# --- AWS config from secrets ---
+AWS_ACCESS_KEY_ID = st.secrets["AWS_ACCESS_KEY_ID"]
+AWS_SECRET_ACCESS_KEY = st.secrets["AWS_SECRET_ACCESS_KEY"]
+AWS_REGION = st.secrets["AWS_REGION"]
+S3_BUCKET_NAME = st.secrets["S3_BUCKET_NAME"]
+S3_TOKEN_PREFIX = st.secrets["S3_TOKEN_PREFIX"]
+
+s3 = boto3.client(
+    "s3",
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    region_name=AWS_REGION,
+)
+
+# ============================================================
+#        TEMPORARY: S3 CONNECTIVITY TEST (CAN DELETE LATER)
+# ============================================================
+with st.expander("Developer check: S3 connectivity test", expanded=True):
+    try:
+        resp = s3.list_objects_v2(Bucket=S3_BUCKET_NAME, Prefix=S3_TOKEN_PREFIX)
+        st.success("S3 connection successful ✅")
+        st.write("Objects under that prefix (may be empty):")
+        st.write(resp.get("Contents", []))
+    except Exception as e:
+        st.error("S3 connection FAILED ❌")
+        st.write(str(e))
+
 
 # ============================================================
 #                PKCE GENERATION HELPERS
@@ -95,9 +122,18 @@ def generate_code_challenge(verifier: str) -> str:
 # ============================================================
 #                   STREAMLIT APP UI
 # ============================================================
-params = st.experimental_get_query_params()
-auth_code = params.get("code", [None])[0]
-returned_state = params.get("state", [None])[0]   # will hold our code_verifier
+params = st.query_params
+
+def _first_or_none(value):
+    if value is None:
+        return None
+    if isinstance(value, list):
+        return value[0]
+    return value
+
+auth_code = _first_or_none(params.get("code"))
+returned_state = _first_or_none(params.get("state"))
+
 
 
 # ============================================================
@@ -150,9 +186,6 @@ if not auth_code:
 # ============================================================
 #        STEP 2 — Exchange Authorization Code for Tokens
 # ============================================================
-
-# Prefer the verifier that came back in `state`.
-# (If for some reason it's missing, this falls back to session_state.)
 code_verifier = returned_state or st.session_state.get("code_verifier")
 
 if not code_verifier:
@@ -179,16 +212,56 @@ response = requests.post(
 if response.status_code != 200:
     st.error("We couldn't finish connecting to Fitbit.")
     st.write("Please try again. If this keeps happening, contact the study team.")
-    # Optional: show raw error only if *you* are debugging
-    # st.write(response.text)
+    # st.write(response.text)  # uncomment for debugging only
     st.stop()
 
 tokens = response.json()
 
+# Show raw tokens for debugging (REMOVE THIS AFTER TESTING)
+st.write("DEBUG: raw token response from Fitbit (do NOT screenshot this without removing sensitive values):")
+st.write(tokens)
+
 # Store tokens in session_state (not shown to user)
-st.session_state["fitbit_access_token"] = tokens["access_token"]
-st.session_state["fitbit_refresh_token"] = tokens["refresh_token"]
-st.session_state["fitbit_user_id"] = tokens["user_id"]
+st.session_state["fitbit_access_token"] = tokens.get("access_token")
+st.session_state["fitbit_refresh_token"] = tokens.get("refresh_token")
+st.session_state["fitbit_user_id"] = tokens.get("user_id")
+
+import json
+
+# ==========================
+# SAVE TOKENS TO S3 (with debug)
+# ==========================
+user_id = tokens.get("user_id")
+
+if not user_id:
+    st.error("DEBUG: No user_id found in token response; cannot save to S3.")
+else:
+    s3_key = f"{S3_TOKEN_PREFIX}{user_id}.json"
+
+    st.write("DEBUG: Preparing to upload token file to S3...")
+    st.write("DEBUG: S3 bucket:", S3_BUCKET_NAME)
+    st.write("DEBUG: S3 key:", s3_key)
+
+    token_payload = {
+        "access_token": tokens.get("access_token"),
+        "refresh_token": tokens.get("refresh_token"),
+        "user_id": user_id,
+    }
+
+    try:
+        response_s3 = s3.put_object(
+            Bucket=S3_BUCKET_NAME,
+            Key=s3_key,
+            Body=json.dumps(token_payload),
+            ContentType="application/json"
+        )
+        st.success("Tokens saved securely for the study team. ✔️")
+        st.write("DEBUG: S3 put_object response:")
+        st.write(response_s3)
+    except Exception as e:
+        st.error("Tokens could not be saved to secure storage (S3). ❌")
+        st.write("DEBUG: S3 upload error:")
+        st.write(str(e))
 
 # Friendly success message
 st.markdown(
@@ -211,7 +284,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
 st.markdown(
     """
     <div style="text-align: center; margin-top: 40px;">
@@ -226,25 +298,3 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-# ============================================================
-#   (Optional) STEP 3 — Example API Call (DEBUG ONLY – COMMENTED)
-# ============================================================
-# If you ever want to debug or test the connection yourself,
-# you can temporarily uncomment the section below.
-#
-# st.markdown("---")
-# st.markdown("## Example API Call: User Profile (debug only)")
-#
-# headers = {"Authorization": f"Bearer {st.session_state['fitbit_access_token']}"}
-#
-# profile_res = requests.get(
-#     f"https://api.fitbit.com/1/user/{st.session_state['fitbit_user_id']}/profile.json",
-#     headers=headers,
-# )
-#
-# if profile_res.status_code == 200:
-#     st.json(profile_res.json())
-# else:
-#     st.error("Failed to fetch profile:")
-#     st.write(profile_res.text)
