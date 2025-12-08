@@ -7,6 +7,8 @@ import urllib.parse
 import boto3
 import json
 
+DEBUG_MODE = False  # Set to True when YOU want debugging
+
 # --- PAGE HEADER STYLING ---
 st.markdown(
     """
@@ -97,17 +99,18 @@ s3 = boto3.client(
 )
 
 # ============================================================
-#        TEMPORARY: S3 CONNECTIVITY TEST (CAN REMOVE LATER)
+#        OPTIONAL: S3 CONNECTIVITY TEST (DEV ONLY)
 # ============================================================
-with st.expander("Developer check: S3 connectivity test", expanded=False):
-    try:
-        resp = s3.list_objects_v2(Bucket=S3_BUCKET_NAME, Prefix=S3_TOKEN_PREFIX)
-        st.success("S3 connection successful ✅")
-        st.write("Objects under that prefix (may be empty):")
-        st.write(resp.get("Contents", []))
-    except Exception as e:
-        st.error("S3 connection FAILED ❌")
-        st.write(str(e))
+if DEBUG_MODE:
+    with st.expander("Developer check: S3 connectivity test", expanded=False):
+        try:
+            resp = s3.list_objects_v2(Bucket=S3_BUCKET_NAME, Prefix=S3_TOKEN_PREFIX)
+            st.success("S3 connection successful ✅")
+            st.write("Objects under that prefix (may be empty):")
+            st.write(resp.get("Contents", []))
+        except Exception as e:
+            st.error("S3 connection FAILED ❌")
+            st.write(str(e))
 
 
 # ============================================================
@@ -219,17 +222,20 @@ response = requests.post(
 if response.status_code != 200:
     st.error("We couldn't finish connecting to Fitbit.")
     st.write("Please try again. If this keeps happening, contact the study team.")
-    # st.write(response.text)  # uncomment for debugging only
+    if DEBUG_MODE:
+        st.write("DEBUG: Fitbit token endpoint response text:")
+        st.write(response.text)
     st.stop()
 
 tokens = response.json()
 
-# (For *production*, you should remove these debug prints)
-st.write(
-    "DEBUG: raw token response from Fitbit "
-    "(do NOT screenshot this with real data in production):"
-)
-st.write(tokens)
+# Debug only: show raw token response
+if DEBUG_MODE:
+    st.write(
+        "DEBUG: raw token response from Fitbit "
+        "(do NOT screenshot this with real data in production):"
+    )
+    st.write(tokens)
 
 # Store tokens in session_state (not shown to user)
 st.session_state["fitbit_access_token"] = tokens.get("access_token")
@@ -242,13 +248,20 @@ st.session_state["fitbit_user_id"] = tokens.get("user_id")
 user_id = tokens.get("user_id")
 
 if not user_id:
-    st.error("DEBUG: No user_id found in token response; cannot save to S3.")
+    # User-friendly message
+    st.error(
+        "We were not able to complete the connection to your Fitbit account. "
+        "Please try again, and if the issue continues, contact the study team."
+    )
+    if DEBUG_MODE:
+        st.write("DEBUG: No user_id found in token response; cannot save to S3.")
 else:
     s3_key = f"{S3_TOKEN_PREFIX}{user_id}.json"
 
-    st.write("DEBUG: Preparing to upload token file to S3...")
-    st.write("DEBUG: S3 bucket:", S3_BUCKET_NAME)
-    st.write("DEBUG: S3 key:", s3_key)
+    if DEBUG_MODE:
+        st.write("DEBUG: Preparing to upload token file to S3...")
+        st.write("DEBUG: S3 bucket:", S3_BUCKET_NAME)
+        st.write("DEBUG: S3 key:", s3_key)
 
     token_payload = {
         "access_token": tokens.get("access_token"),
@@ -263,15 +276,22 @@ else:
             Body=json.dumps(token_payload),
             ContentType="application/json",
         )
-        st.success("Tokens saved securely for the study team. ✔️")
-        st.write("DEBUG: S3 put_object response:")
-        st.write(response_s3)
+        if DEBUG_MODE:
+            st.success("Tokens saved securely for the study team. ✔️")
+            st.write("DEBUG: S3 put_object response:")
+            st.write(response_s3)
     except Exception as e:
-        st.error("Tokens could not be saved to secure storage (S3). ❌")
-        st.write("DEBUG: S3 upload error:")
-        st.write(str(e))
+        st.error(
+            "We couldn't save your Fitbit connection to our secure storage. "
+            "Please try again later or contact the study team."
+        )
+        if DEBUG_MODE:
+            st.write("DEBUG: S3 upload error:")
+            st.write(str(e))
 
-# Friendly success message
+# ============================================================
+#        CLEAN SUCCESS MESSAGE FOR PARTICIPANTS
+# ============================================================
 st.markdown(
     """
     <div style="text-align: center;">
