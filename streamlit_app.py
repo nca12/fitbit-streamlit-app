@@ -1,11 +1,11 @@
-import streamlit as st 
-import requests 
-import os 
-import hashlib 
-import base64 
+import streamlit as st
+import requests
+import os
+import hashlib
+import base64
 import urllib.parse
-import boto3  # NEW
-
+import boto3
+import json
 
 # --- PAGE HEADER STYLING ---
 st.markdown(
@@ -60,7 +60,12 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown('<div class="subheader" style="margin-top: 40px;">To get started, connect your Fitbit account below.</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="subheader" style="margin-top: 40px;">'
+    'To get started, connect your Fitbit account below.'
+    '</div>',
+    unsafe_allow_html=True
+)
 
 
 # ============================================================
@@ -75,12 +80,14 @@ SCOPES = (
     "electrocardiogram irregular_rhythm_notifications"
 )
 
-# --- AWS config from secrets ---
+# --- AWS config from secrets (with sane defaults) ---
 AWS_ACCESS_KEY_ID = st.secrets["AWS_ACCESS_KEY_ID"]
 AWS_SECRET_ACCESS_KEY = st.secrets["AWS_SECRET_ACCESS_KEY"]
 AWS_REGION = st.secrets["AWS_REGION"]
-S3_BUCKET_NAME = st.secrets["S3_BUCKET_NAME"]
-S3_TOKEN_PREFIX = st.secrets["S3_TOKEN_PREFIX"]
+
+# default to your bucket + a 'tokens/' prefix if not set in secrets.toml
+S3_BUCKET_NAME = st.secrets.get("S3_BUCKET_NAME", "fitbit-study-tokens-stored")
+S3_TOKEN_PREFIX = st.secrets.get("S3_TOKEN_PREFIX", "tokens/")
 
 s3 = boto3.client(
     "s3",
@@ -90,9 +97,9 @@ s3 = boto3.client(
 )
 
 # ============================================================
-#        TEMPORARY: S3 CONNECTIVITY TEST (CAN DELETE LATER)
+#        TEMPORARY: S3 CONNECTIVITY TEST (CAN REMOVE LATER)
 # ============================================================
-with st.expander("Developer check: S3 connectivity test", expanded=True):
+with st.expander("Developer check: S3 connectivity test", expanded=False):
     try:
         resp = s3.list_objects_v2(Bucket=S3_BUCKET_NAME, Prefix=S3_TOKEN_PREFIX)
         st.success("S3 connection successful ✅")
@@ -124,6 +131,7 @@ def generate_code_challenge(verifier: str) -> str:
 # ============================================================
 params = st.query_params
 
+
 def _first_or_none(value):
     if value is None:
         return None
@@ -131,10 +139,9 @@ def _first_or_none(value):
         return value[0]
     return value
 
+
 auth_code = _first_or_none(params.get("code"))
 returned_state = _first_or_none(params.get("state"))
-
-
 
 # ============================================================
 #                STEP 1 — Show Fitbit Login Link
@@ -217,8 +224,11 @@ if response.status_code != 200:
 
 tokens = response.json()
 
-# Show raw tokens for debugging (REMOVE THIS AFTER TESTING)
-st.write("DEBUG: raw token response from Fitbit (do NOT screenshot this without removing sensitive values):")
+# (For *production*, you should remove these debug prints)
+st.write(
+    "DEBUG: raw token response from Fitbit "
+    "(do NOT screenshot this with real data in production):"
+)
 st.write(tokens)
 
 # Store tokens in session_state (not shown to user)
@@ -226,10 +236,8 @@ st.session_state["fitbit_access_token"] = tokens.get("access_token")
 st.session_state["fitbit_refresh_token"] = tokens.get("refresh_token")
 st.session_state["fitbit_user_id"] = tokens.get("user_id")
 
-import json
-
 # ==========================
-# SAVE TOKENS TO S3 (with debug)
+# SAVE TOKENS TO S3
 # ==========================
 user_id = tokens.get("user_id")
 
@@ -253,7 +261,7 @@ else:
             Bucket=S3_BUCKET_NAME,
             Key=s3_key,
             Body=json.dumps(token_payload),
-            ContentType="application/json"
+            ContentType="application/json",
         )
         st.success("Tokens saved securely for the study team. ✔️")
         st.write("DEBUG: S3 put_object response:")
@@ -297,4 +305,3 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
